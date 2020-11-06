@@ -1,67 +1,69 @@
 # 项目概况
 
-这是一个Python连接MySQL的库，采用c++编写。分为纯Python和使用boost两种编写方式。
-
-纯Python仅使用了Python提供的原生API，仅使用Python.h头文件，优点是占用空间小，缺点是编写难度大，代码冗长。
-
-boost方式利用了boost动态链接库，使用命名空间boost::python，利用boost封装好的接口来实现，缺点是依赖文件加载很慢，优点是编写难度低。
+这是一个Python连接MySQL的库，采用c++编写。利用Boost.Python C++库，将C++的函数或类进行包装，暴露给Python进行import调用。
 
 # 环境
 
-1、目前由于精力有限，CMakeLists.txt只编写了windows部分，故目前只能在windows环境下编译，有能力的小伙伴可以自行修改CMakeLists文件来在其他平台下编译。
+编程环境：Boost 1.74.0，Python3.7.7，Windows10
 
-如要在其他平台下编译，CMakeLists需要修改gcc，g++，cmake目录，Python3安装目录内include文件夹，libs文件夹，检查Python3安装目录内libs文件夹内的python3的静态库名称，检查mysql安装目录文件夹内lib文件夹下的libmysql动态链接库与静态链接库，修改cmakelists内的file命令，该命令用于把libmysql动态链接库复制到输出目录，这个文件是必须有的，以上种种，来重写编辑最下方的target_link_libraries。
+编译环境：
 
-对于文本消息，可自行编辑（其实文本信息我只是为了装x，显得输出多）。
+对于编译环境，我要开始吐槽了。
 
-2、编程环境
+用vs2019，可完美编译。
 
-c++20标准，Clion编辑器，Python3.7动/静态链接库，MySQL Server 8.0，boost 1.74.0
-
-3、编译环境
-
-gcc，g++（或visual studio），Python3.x，MySQL Server 8.0（对于5.7是否支持尚不明确，还没倒出功夫去查阅MySQL8.0和5.7之间mysql.h和libmysql是否有区别，小伙伴们可以尝试一下），Boost
+用Cmake + Jetbrains Clion方式，可能是我水平不行，玩转不来Cmake，导致Boost动态链接库一直都无法连接。
 
 # 编译
 
-1、修改CMakeLists.txt文件，也可在cmake-gui打开（我在cmake-gui打开后，使用目录浏览框的时候会闪退不知为何）。
+无论是用Visual Studio还是CMake，在这里我只阐述工程所需要的头文件与依赖库。
 
-修改变量如图：
+1、以Visual Studio为例：
 
-![](.\image-20201102233633923.png)
+C/C++头文件目录：
 
-根据自己电脑的环境配置好编译器，python，mysql，boost目录。
+​			Python安装目录下的include目录；
 
-2、cd到项目根目录，命令行下输入：
+​			MySQL安装目录下的include目录；
 
-```powershell
-cmake . -G "xx"
-```
+​			boost解压文件夹（下载的压缩包解压，这个自身就是个头文件目录）。
 
-其中xx为编译驱动。
+C/C++库目录：
 
-命令行输入：
+​			Python安装文件夹下的libs目录；
 
-```powershell
-cmake --help
-```
+​			MySQL安装文件夹下的lib目录，并手动把目录内的libmysql.dll动态链接库复制到生成文件夹内，这个文件与生成的动态链接库永远在一起；
 
-查看所支持的驱动。本人使用驱动MinGW Makefiles，Clion编辑器使用的是CodeBlocks - MinGW Makefiles驱动，问题不大
+​			Boost编译生成的动态链接库目录，默认为解压目录内的stage/lib目录。
 
-3、项目根目录下，命令行：
+链接器需要链接的动态链接库：
 
-```powershell
-make
-```
+​			Python3.x.lib（版本按着自己的来，Python2没试过不知道能不能用）
 
-开始编译
+​			libmysql.lib
 
-4、生成的dll，so文件在bin目录下，检查bin目录下是否有libmysql动态链接库，如果没有，请务去mysql安装目录下的lib文件夹把libmysql复制过来，否则库无法运行。
+生成后将生成的dll文件改扩展名为pyd，连同libmysql.dll一同复制到Python安装文件夹内的Dlls文件夹，便可以在Python中使用。
 
-5、将生成的文件扩展名改为pyd，将pyd与libmysql一同复制到python安装目录下的DLLS文件夹内，然后在python内使用。
+2、对于CMake
+
+​		需要find_package的包有：Python3（REQUIRED），Boost COMPONENT python37 REQUIRED
+
+​		需要检查的文件：MySQL安装目录/include/mysql.h、MySQL安装目录/lib/libmysql.lib
+
+​		需要复制的文件：MySQL安装目录/lib/libmysql.dll，TARGET为生成目录
+
+​		add_library的方式为SHARED，
+
+如果谁成功配置出了CMakeLists.txt文件并成功编译，麻烦踹我一脚谢谢~~~本人写的CMakeLists也放进来了，求指导。
+
+# 目前代码存在的不足
+
+仅实现了执行正确的SQL语句，尚未添加SQL语句执行出错的代码。
 
 # 联系
 
 如有问题，请联系我。（废话）
 
-本人新人，代码极为青涩，有任何建议欢迎提出。嘻嘻嘻。
+本人新人，代码极为青涩，有任何建议欢迎提出。
+
+嘻嘻嘻。
