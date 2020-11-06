@@ -6,16 +6,16 @@ SET(CMAKE_C_COMPILER_WORKS 1)
 SET(CMAKE_CXX_COMPILER_WORKS 1)
 # =============== 以下配置为必须指定的配置 ================
 
-set(CMAKE_MAKE_PROGRAM "D:\\Program Files\\CMake\\bin\\cmake.exe") # 配置cmake地址
+set(CMAKE_MAKE_PROGRAM "D:/Program Files/CMake/bin/cmake.exe") # 配置cmake地址
 set(CMAKE_C_COMPILER "F:/Program Files/mingw-w64/x86_64-8.1.0-posix-seh-rt_v6-rev0/bin/gcc.exe")    # 配置gcc地址
 set(CMAKE_CXX_COMPILER "F:/Program Files/mingw-w64/x86_64-8.1.0-posix-seh-rt_v6-rev0/bin/g++.exe")  # 配置g++地址
 
-project(MyPyMySQL)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -fexec-charset=GBK -O3 -pthread")
+project(myPyMySQL)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -fexec-charset=GBK -O3 -pthread -Wfatal-errors -fPIC")
 # MySQL
-set(MYSQL_BASE_DIR F:\\mysql-8.0.22 CACHE PATH "mysql server base direction")   # MySQL server 安装目录
+set(MYSQL_BASE_DIR F:/mysql-8.0.22 CACHE PATH "mysql server base direction")   # MySQL server 安装目录
 # boost
-set(Boost_ROOT F:\\boost_1_74_0)    # boost目录
+set(Boost_ROOT F:/boost_1_74_0)    # boost目录
 set(BOOST_LIBS F:/boost_1_74_0/stage/lib) # boost动态链接库目录
 
 
@@ -27,7 +27,7 @@ ENDIF()
 ## ===c++编译器配置
 set(CMAKE_CXX_STANDARD 20)  # 语言标准：c++11
 
-set(Boost_PYTHON37_LIBRARY_RELEASE F:/boost_1_74_0/stage/lib/libboost_python37-vc142-mt-sgd-x64-1_74.lib)
+set(Boost_PYTHON37_LIBRARY_RELEASE F:/boost_1_74_0/stage/lib/libboost_python37-vc142-mt-x64-1_74.lib)
 find_package(Python3)
 find_package(PythonLibs)
 #include(${BOOST_LIBS}/cmake/BoostDetectToolset-1.74.0.cmake)
@@ -66,9 +66,10 @@ configure_file(
 message(STATUS "PYTHON_LIBRARY: ${PYTHON_LIBRARY}")
 message(STATUS "Boost_LIBRARIES: ${Boost_LIBRARIES}")
 
-add_library(MyPyMySQL SHARED src/MyPyMySQL.cpp)
-target_link_libraries(MyPyMySQL libmysql.lib ${PYTHON_LIBRARIES} ${Boost_LIBRARIES})
+add_library(myPyMySQL SHARED src/MyPyMySQL.cpp)
+target_link_libraries(myPyMySQL libmysql.lib)
 #get_cmake_property(_variableNames VARIABLES)
 #foreach (_variableName ${_variableNames})
 #    message(STATUS "${_variableName}=${${_variableName}}")
 #endforeach()
+#set_target_properties(myPyMySQL PROPERTIES PREFIX "" )
